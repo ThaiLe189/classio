@@ -1,56 +1,56 @@
-# Classio — Ứng dụng quản lý lớp học
+# Classio — Classroom Management App
 
-Web app cho giáo viên/trung tâm tự quản lý lớp học: lớp, học sinh, điểm danh,
-điểm số, thời khóa biểu, học phí và trang tổng quan.
+A web app for teachers/tutoring centers to manage their own classes: classes,
+students, attendance, grades, timetable, tuition, and an overview dashboard.
 
 ## Tech stack
 - **Next.js 15** (App Router, TypeScript) — frontend + backend (Server Actions)
-- **Supabase** — Postgres + Auth (email/mật khẩu), bảo mật bằng Row Level Security
-- **Tailwind CSS v4** — giao diện
+- **Supabase** — Postgres + Auth (email/password), secured with Row Level Security
+- **Tailwind CSS v4** — UI
 - **Vercel** — hosting
 
-## Tính năng
-| Module | Đường dẫn |
+## Features
+| Module | Route |
 |---|---|
-| Đăng nhập / Đăng ký | `/login`, `/signup` |
-| Tổng quan | `/dashboard` |
-| Lớp học (CRUD) | `/classes` |
-| Học sinh (CRUD) | `/students` |
-| Điểm danh | `/attendance` |
-| Điểm số | `/grades` |
-| Thời khóa biểu | `/schedule` |
-| Học phí | `/tuition` |
+| Sign in / Sign up | `/login`, `/signup` |
+| Overview | `/dashboard` |
+| Classes (CRUD) | `/classes` |
+| Students (CRUD) | `/students` |
+| Attendance | `/attendance` |
+| Grades | `/grades` |
+| Timetable | `/schedule` |
+| Tuition | `/tuition` |
 
-Mọi dữ liệu được cô lập theo tài khoản qua RLS (`owner_id = auth.uid()`).
+All data is isolated per account via RLS (`owner_id = auth.uid()`).
 
-## Bắt đầu nhanh
-1. Cài dependencies: `npm install`
-2. Tạo project Supabase, điền key vào `.env.local` (xem `.env.example`)
-3. Áp schema: xem [docs/SETUP.md](docs/SETUP.md)
-4. Chạy: `npm run dev` → http://localhost:3000
+## Quick start
+1. Install dependencies: `npm install`
+2. Create a Supabase project and put the keys in `.env.local` (see `.env.example`)
+3. Apply the schema: see [docs/SETUP.md](docs/SETUP.md)
+4. Run: `npm run dev` → http://localhost:3000
 
-## Lệnh
-- `npm run dev` — chạy môi trường phát triển
-- `npm run build` — build production
-- `npm run typecheck` — kiểm tra kiểu TypeScript
+## Scripts
+- `npm run dev` — start the development server
+- `npm run build` — production build
+- `npm run typecheck` — TypeScript type checking
 
-## Cấu trúc thư mục
+## Project structure
 ```
 app/
   (auth)/        # login, signup, server actions
-  (dashboard)/   # các trang sau đăng nhập (layout có sidebar + auth guard)
-  auth/signout/  # route đăng xuất
-components/      # UI dùng chung (ui.tsx, Sidebar, SubmitButton)
+  (dashboard)/   # authenticated pages (layout with sidebar + auth guard)
+  auth/signout/  # sign-out route
+components/      # shared UI (ui.tsx, Sidebar, SubmitButton)
 lib/
-  supabase/      # client / server / middleware Supabase
+  supabase/      # Supabase client / server / middleware
   auth.ts        # requireUser()
-  utils.ts       # định dạng tiền/ngày, hằng số
-types/database.ts# kiểu khớp schema
+  utils.ts       # currency/date formatting, constants
+types/database.ts# types matching the schema
 supabase/migrations/ # SQL schema + RLS
 ```
 
-## Deploy lên Vercel
-Xem [docs/DEPLOY.md](docs/DEPLOY.md).
+## Deploy to Vercel
+See [docs/DEPLOY.md](docs/DEPLOY.md).
 
-## Chạy bằng Docker
-Xem [docs/DOCKER.md](docs/DOCKER.md).
+## Run with Docker
+See [docs/DOCKER.md](docs/DOCKER.md).

@@ -1,6 +1,6 @@
-# Deploy Classio lên Vercel
+# Deploy Classio to Vercel
 
-## 1. Đẩy code lên GitHub
+## 1. Push the code to GitHub
 ```bash
 git add .
 git commit -m "Classio MVP"
@@ -9,24 +9,24 @@ git remote add origin https://github.com/<user>/<repo>.git
 git push -u origin main
 ```
 
-## 2. Import vào Vercel
-1. Vào https://vercel.com → New Project → import repo GitHub.
-2. Framework preset: **Next.js** (tự nhận diện).
-3. Thêm **Environment Variables** (Production + Preview):
+## 2. Import into Vercel
+1. Go to https://vercel.com → New Project → import the GitHub repo.
+2. Framework preset: **Next.js** (auto-detected).
+3. Add **Environment Variables** (Production + Preview):
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 4. Deploy.
 
-## 3. Cấu hình Supabase Auth cho domain Vercel
-Trong Supabase Dashboard → **Authentication → URL Configuration**:
+## 3. Configure Supabase Auth for the Vercel domain
+In the Supabase Dashboard → **Authentication → URL Configuration**:
 - **Site URL**: `https://<your-app>.vercel.app`
-- **Redirect URLs**: thêm `https://<your-app>.vercel.app/**`
+- **Redirect URLs**: add `https://<your-app>.vercel.app/**`
 
-## 4. (Tùy chọn) Tắt xác nhận email khi thử nghiệm
-Authentication → Providers → Email → tắt "Confirm email"
-để đăng ký xong vào thẳng app. Bật lại khi chạy thật.
+## 4. (Optional) Disable email confirmation while testing
+Authentication → Providers → Email → turn off "Confirm email"
+so sign-up logs in immediately. Re-enable it for production.
 
-## 5. Kiểm tra sau deploy
-- Đăng ký 1 tài khoản → tạo lớp, học sinh.
-- Đăng ký tài khoản thứ 2 (trình duyệt ẩn danh) → xác nhận **không** thấy
-  dữ liệu của tài khoản 1 (RLS hoạt động).
+## 5. Post-deploy check
+- Sign up an account → create a class and a student.
+- Sign up a second account (incognito window) → confirm it does **not** see
+  the first account's data (RLS is working).

@@ -1,23 +1,24 @@
-# Chạy Classio bằng Docker
+# Run Classio with Docker
 
-> ⚠️ Biến `NEXT_PUBLIC_SUPABASE_URL` và `NEXT_PUBLIC_SUPABASE_ANON_KEY` được
-> Next.js **nhúng vào bundle lúc build**, nên phải truyền dưới dạng *build args*
-> (không phải chỉ runtime env). Đổi key => phải build lại ảnh.
+> ⚠️ `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are
+> **inlined into the bundle at build time** by Next.js, so they must be passed
+> as *build args* (not just runtime env). Changing the keys requires rebuilding
+> the image.
 
-## Cách 1 — docker compose (khuyến nghị)
-Đặt 2 biến trong file `.env` ở thư mục gốc (compose tự đọc):
+## Option 1 — docker compose (recommended)
+Put the two variables in a `.env` file at the project root (compose reads it):
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://<ref>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
 ```
-Rồi:
+Then:
 ```bash
-docker compose up --build      # build + chạy
-# mở http://localhost:3000
-docker compose down            # dừng
+docker compose up --build      # build + run
+# open http://localhost:3000
+docker compose down            # stop
 ```
 
-## Cách 2 — docker thuần
+## Option 2 — plain docker
 ```bash
 docker build \
   --build-arg NEXT_PUBLIC_SUPABASE_URL="https://<ref>.supabase.co" \
@@ -27,10 +28,11 @@ docker build \
 docker run --rm -p 3000:3000 classio
 ```
 
-## Ghi chú
-- Ảnh dùng Next.js **standalone output** (`next.config.ts` đã bật `output: "standalone"`)
-  nên rất nhỏ: chỉ chứa `server.js` + node_modules tối thiểu.
-- Multi-stage: `deps` → `builder` → `runner`. Container chạy bằng user không phải root (`nextjs`).
-- Trên Windows: phải mở **Docker Desktop** trước khi chạy lệnh trên.
-- Database vẫn là Supabase trên cloud — container chỉ chạy phần web. Không cần
-  Postgres trong Docker trừ khi bạn muốn self-host Supabase riêng.
+## Notes
+- The image uses Next.js **standalone output** (`next.config.ts` has
+  `output: "standalone"`), so it is small: only `server.js` + minimal node_modules.
+- Multi-stage: `deps` → `builder` → `runner`. The container runs as a non-root
+  user (`nextjs`).
+- On Windows: start **Docker Desktop** before running the commands above.
+- The database is still Supabase in the cloud — the container only runs the web
+  app. You do not need Postgres in Docker unless you want to self-host Supabase.

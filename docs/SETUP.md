@@ -1,42 +1,42 @@
-# Classio — Hướng dẫn cài đặt
+# Classio — Setup Guide
 
-## 1. Tạo project Supabase
-1. Vào https://supabase.com → New project.
-2. Project Settings → API: copy **Project URL** và **anon public key**.
-3. Điền vào `.env.local`:
+## 1. Create a Supabase project
+1. Go to https://supabase.com → New project.
+2. Project Settings → API: copy the **Project URL** and the **anon public key**.
+3. Put them in `.env.local`:
    ```
    NEXT_PUBLIC_SUPABASE_URL=...
    NEXT_PUBLIC_SUPABASE_ANON_KEY=...
    ```
 
-## 2. Áp schema database
+## 2. Apply the database schema
 
-### Cách A — Supabase CLI (khuyến nghị, đã chọn)
+### Option A — Supabase CLI (recommended)
 ```bash
-# Cài CLI nếu chưa có (xem https://supabase.com/docs/guides/cli)
+# Install the CLI if needed (see https://supabase.com/docs/guides/cli)
 npm install -g supabase
 
-supabase init                       # tạo config.toml (giữ nguyên migrations sẵn có)
-supabase link --project-ref <REF>   # REF lấy từ URL: https://<REF>.supabase.co
-supabase db push                    # áp supabase/migrations/0001_init.sql lên DB
+supabase init                       # creates config.toml (keeps existing migrations)
+supabase link --project-ref <REF>   # REF is from the URL: https://<REF>.supabase.co
+supabase db push                    # applies supabase/migrations/0001_init.sql
 
-# (tùy chọn) regen lại types từ schema thật:
+# (optional) regenerate types from the real schema:
 supabase gen types typescript --linked > types/database.ts
 ```
 
-### Cách B — chạy tay
-Mở Supabase Dashboard → SQL Editor → dán toàn bộ nội dung
+### Option B — run manually
+Open Supabase Dashboard → SQL Editor → paste the full contents of
 `supabase/migrations/0001_init.sql` → Run.
 
-## 3. Kiểm tra RLS (QUAN TRỌNG)
-Trong SQL Editor chạy:
+## 3. Verify RLS (IMPORTANT)
+In the SQL Editor run:
 ```sql
 select tablename, rowsecurity
 from pg_tables where schemaname = 'public';
 ```
-Tất cả 7 bảng phải có `rowsecurity = true`.
+All 7 tables must have `rowsecurity = true`.
 
-## 4. Chạy app
+## 4. Run the app
 ```bash
 npm run dev
 ```

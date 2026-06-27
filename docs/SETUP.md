@@ -18,7 +18,7 @@ npm install -g supabase
 
 supabase init                       # creates config.toml (keeps existing migrations)
 supabase link --project-ref <REF>   # REF is from the URL: https://<REF>.supabase.co
-supabase db push                    # applies supabase/migrations/0001_init.sql
+supabase db push                    # applies supabase/migrations/20240101000000_init.sql
 
 # (optional) regenerate types from the real schema:
 supabase gen types typescript --linked > types/database.ts
@@ -26,7 +26,7 @@ supabase gen types typescript --linked > types/database.ts
 
 ### Option B — run manually
 Open Supabase Dashboard → SQL Editor → paste the full contents of
-`supabase/migrations/0001_init.sql` → Run.
+`supabase/migrations/20240101000000_init.sql` → Run.
 
 ## 3. Verify RLS (IMPORTANT)
 In the SQL Editor run:

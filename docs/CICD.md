@@ -38,3 +38,20 @@ Vercel → Project → Settings → Git → turn off "Production Branch" auto-de
 > Simpler alternative: skip this Action entirely and just connect the repo in the
 > Vercel dashboard — Vercel auto-deploys `main` on push with zero config. Use this
 > Action only when you want CI gating (typecheck/build) before every deploy.
+
+## Auto-migration (Supabase)
+The `migrate` job runs `supabase db push` on every push to `main`, applying any
+new files in `supabase/migrations/` to the database **before** the app deploys.
+Supabase CLI tracks which migrations were already applied, so re-runs are safe.
+
+Add these secrets (in addition to the Vercel ones):
+
+| Secret | Where to get it |
+|---|---|
+| `SUPABASE_ACCESS_TOKEN` | https://supabase.com/dashboard/account/tokens → Generate new token |
+| `SUPABASE_PROJECT_REF` | the `<ref>` in your URL `https://<ref>.supabase.co` |
+| `SUPABASE_DB_PASSWORD` | the database password (Supabase → Project Settings → Database → reset if forgotten) |
+
+> Migration files must be named `<timestamp>_name.sql` (e.g. `20240101000000_init.sql`).
+> Do **not** also paste the SQL manually if you use auto-migration — let the pipeline
+> own the schema to avoid double-apply conflicts (CREATE POLICY is not idempotent).

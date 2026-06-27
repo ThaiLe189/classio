@@ -1,4 +1,4 @@
-// Type khớp với supabase/migrations/0001_init.sql.
+// Type khớp với supabase/migrations/20240101000000_init.sql.
 // Sau khi chạy migration, có thể regen bằng:
 //   supabase gen types typescript --linked > types/database.ts
 

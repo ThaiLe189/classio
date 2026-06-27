@@ -14,60 +14,61 @@ export type AuthState = {
   message?: string;
 };
 
-export const initialAuthState: AuthState = { stage: "email", email: "" };
-
 export async function authenticate(
   prev: AuthState,
   formData: FormData
 ): Promise<AuthState> {
   const intent = String(formData.get("intent") ?? "");
   const email = String(formData.get("email") ?? prev.email).trim();
+  let verified = false;
 
-  const supabase = await createClient();
+  try {
+    const supabase = await createClient();
 
-  if (intent === "send") {
-    const parsed = emailSchema.safeParse(email);
-    if (!parsed.success) {
-      return { stage: "email", email, error: parsed.error.issues[0]?.message };
+    if (intent === "send") {
+      const parsed = emailSchema.safeParse(email);
+      if (!parsed.success) {
+        return { stage: "email", email, error: parsed.error.issues[0]?.message };
+      }
+      const { error } = await supabase.auth.signInWithOtp({
+        email: parsed.data,
+        options: { shouldCreateUser: true },
+      });
+      if (error) {
+        const msg = /rate|too many|seconds/i.test(error.message)
+          ? "Gửi quá nhiều lần. Vui lòng thử lại sau ít phút."
+          : `Không gửi được mã: ${error.message}`;
+        return { stage: "email", email, error: msg };
+      }
+      return {
+        stage: "otp",
+        email: parsed.data,
+        message: `Đã gửi mã 6 số tới ${parsed.data}. Kiểm tra cả hộp thư spam.`,
+      };
     }
-    const { error } = await supabase.auth.signInWithOtp({
-      email: parsed.data,
-      options: { shouldCreateUser: true },
+
+    // intent === "verify"
+    const token = String(formData.get("token") ?? "").trim();
+    if (!/^\d{6}$/.test(token)) {
+      return { stage: "otp", email, error: "Mã gồm 6 chữ số." };
+    }
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: "email",
     });
     if (error) {
-      const msg = /rate|too many|seconds/i.test(error.message)
-        ? "Gửi quá nhiều lần. Vui lòng thử lại sau ít phút."
-        : "Không gửi được mã. Kiểm tra lại email.";
-      return { stage: "email", email, error: msg };
+      return { stage: "otp", email, error: "Mã không đúng hoặc đã hết hạn." };
     }
-    return {
-      stage: "otp",
-      email: parsed.data,
-      message: `Đã gửi mã 6 số tới ${parsed.data}. Kiểm tra cả hộp thư spam.`,
-    };
+    verified = true;
+  } catch (e) {
+    console.error("[auth] unexpected error:", e);
+    return { stage: prev.stage, email, error: "Lỗi máy chủ. Vui lòng thử lại sau." };
   }
 
-  // intent === "verify"
-  const token = String(formData.get("token") ?? "").trim();
-  if (!/^\d{6}$/.test(token)) {
-    return { stage: "otp", email, error: "Mã gồm 6 chữ số." };
+  if (verified) {
+    revalidatePath("/", "layout");
+    redirect("/dashboard");
   }
-  const { error } = await supabase.auth.verifyOtp({
-    email,
-    token,
-    type: "email",
-  });
-  if (error) {
-    return { stage: "otp", email, error: "Mã không đúng hoặc đã hết hạn." };
-  }
-
-  revalidatePath("/", "layout");
-  redirect("/dashboard");
-}
-
-export async function resendOtp(
-  prev: AuthState,
-  formData: FormData
-): Promise<AuthState> {
-  return authenticate(prev, formData);
+  return { stage: "otp", email };
 }

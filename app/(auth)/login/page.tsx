@@ -1,9 +1,11 @@
 "use client";
 
 import { useActionState } from "react";
-import { authenticate, initialAuthState } from "../actions";
+import { authenticate, type AuthState } from "../actions";
 import { Field, Input, Card } from "@/components/ui";
 import { SubmitButton } from "@/components/SubmitButton";
+
+const initialAuthState: AuthState = { stage: "email", email: "" };
 
 export default function LoginPage() {
   const [state, formAction] = useActionState(authenticate, initialAuthState);

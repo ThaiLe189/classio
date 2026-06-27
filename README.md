@@ -54,3 +54,6 @@ See [docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Run with Docker
 See [docs/DOCKER.md](docs/DOCKER.md).
+
+## CI/CD
+Auto-deploy to Vercel on push to `main` — see [docs/CICD.md](docs/CICD.md).

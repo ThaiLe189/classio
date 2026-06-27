@@ -5,59 +5,69 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 
-const credsSchema = z.object({
-  email: z.string().email("Email không hợp lệ"),
-  password: z.string().min(6, "Mật khẩu tối thiểu 6 ký tự"),
-});
+const emailSchema = z.string().email("Email không hợp lệ");
 
-export type AuthState = { error?: string };
+export type AuthState = {
+  stage: "email" | "otp";
+  email: string;
+  error?: string;
+  message?: string;
+};
 
-export async function login(
-  _prev: AuthState,
+export const initialAuthState: AuthState = { stage: "email", email: "" };
+
+export async function authenticate(
+  prev: AuthState,
   formData: FormData
 ): Promise<AuthState> {
-  const parsed = credsSchema.safeParse({
-    email: formData.get("email"),
-    password: formData.get("password"),
-  });
-  if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dữ liệu không hợp lệ" };
-  }
+  const intent = String(formData.get("intent") ?? "");
+  const email = String(formData.get("email") ?? prev.email).trim();
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+
+  if (intent === "send") {
+    const parsed = emailSchema.safeParse(email);
+    if (!parsed.success) {
+      return { stage: "email", email, error: parsed.error.issues[0]?.message };
+    }
+    const { error } = await supabase.auth.signInWithOtp({
+      email: parsed.data,
+      options: { shouldCreateUser: true },
+    });
+    if (error) {
+      const msg = /rate|too many|seconds/i.test(error.message)
+        ? "Gửi quá nhiều lần. Vui lòng thử lại sau ít phút."
+        : "Không gửi được mã. Kiểm tra lại email.";
+      return { stage: "email", email, error: msg };
+    }
+    return {
+      stage: "otp",
+      email: parsed.data,
+      message: `Đã gửi mã 6 số tới ${parsed.data}. Kiểm tra cả hộp thư spam.`,
+    };
+  }
+
+  // intent === "verify"
+  const token = String(formData.get("token") ?? "").trim();
+  if (!/^\d{6}$/.test(token)) {
+    return { stage: "otp", email, error: "Mã gồm 6 chữ số." };
+  }
+  const { error } = await supabase.auth.verifyOtp({
+    email,
+    token,
+    type: "email",
+  });
   if (error) {
-    return { error: "Email hoặc mật khẩu không đúng" };
+    return { stage: "otp", email, error: "Mã không đúng hoặc đã hết hạn." };
   }
 
   revalidatePath("/", "layout");
   redirect("/dashboard");
 }
 
-export async function signup(
-  _prev: AuthState,
+export async function resendOtp(
+  prev: AuthState,
   formData: FormData
 ): Promise<AuthState> {
-  const fullName = String(formData.get("full_name") ?? "").trim();
-  const parsed = credsSchema.safeParse({
-    email: formData.get("email"),
-    password: formData.get("password"),
-  });
-  if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dữ liệu không hợp lệ" };
-  }
-
-  const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
-    email: parsed.data.email,
-    password: parsed.data.password,
-    options: { data: { full_name: fullName || parsed.data.email } },
-  });
-  if (error) {
-    return { error: error.message };
-  }
-
-  revalidatePath("/", "layout");
-  // Nếu Supabase bật xác nhận email, sẽ chưa có session -> middleware đưa về /login.
-  redirect("/dashboard");
+  return authenticate(prev, formData);
 }

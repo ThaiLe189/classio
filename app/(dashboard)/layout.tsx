@@ -8,9 +8,9 @@ export default async function DashboardLayout({
 }) {
   const user = await requireUser();
   return (
-    <div className="flex min-h-screen">
+    <div className="min-h-screen md:flex">
       <Sidebar email={user.email ?? ""} />
-      <main className="flex-1 bg-gray-50 p-6">{children}</main>
+      <main className="flex-1 bg-gray-50 p-4 md:p-6">{children}</main>
     </div>
   );
 }

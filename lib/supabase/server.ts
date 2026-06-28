@@ -21,7 +21,7 @@ export async function createClient() {
               cookieStore.set(name, value, options)
             );
           } catch {
-            // Được gọi từ Server Component — bỏ qua, middleware sẽ refresh session.
+            // Called from a Server Component — ignore; middleware will refresh the session.
           }
         },
       },

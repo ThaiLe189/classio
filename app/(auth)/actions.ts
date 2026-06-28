@@ -7,8 +7,8 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 
 const credsSchema = z.object({
-  email: z.string().email("Email không hợp lệ"),
-  password: z.string().min(6, "Mật khẩu tối thiểu 6 ký tự"),
+  email: z.string().email("Invalid email"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 export type AuthState = { error?: string; message?: string; email?: string };
@@ -30,7 +30,7 @@ export async function login(
     password: formData.get("password"),
   });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dữ liệu không hợp lệ" };
+    return { error: parsed.error.issues[0]?.message ?? "Invalid data" };
   }
 
   const supabase = await createClient();
@@ -38,11 +38,11 @@ export async function login(
   if (error) {
     if (error.code === "email_not_confirmed" || /not confirmed/i.test(error.message)) {
       return {
-        error: "Email chưa được xác nhận. Kiểm tra hộp thư (cả spam) hoặc gửi lại email xác nhận.",
+        error: "Email not confirmed. Check your inbox (including spam) or resend the confirmation email.",
         email: parsed.data.email,
       };
     }
-    return { error: "Email hoặc mật khẩu không đúng." };
+    return { error: "Incorrect email or password." };
   }
 
   revalidatePath("/", "layout");
@@ -59,7 +59,7 @@ export async function signup(
     password: formData.get("password"),
   });
   if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message ?? "Dữ liệu không hợp lệ" };
+    return { error: parsed.error.issues[0]?.message ?? "Invalid data" };
   }
 
   const supabase = await createClient();
@@ -75,13 +75,13 @@ export async function signup(
   if (error) {
     return { error: error.message };
   }
-  // Supabase trả "thành công" giả khi email đã tồn tại -> identities rỗng.
+  // Supabase returns a fake "success" when the email already exists -> empty identities.
   if (data.user && (data.user.identities?.length ?? 0) === 0) {
-    return { error: "Email này đã được đăng ký. Vui lòng đăng nhập." };
+    return { error: "This email is already registered. Please sign in." };
   }
 
   return {
-    message: "Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản trước khi đăng nhập.",
+    message: "Sign-up successful! Please check your email to confirm your account before signing in.",
   };
 }
 
@@ -91,7 +91,7 @@ export async function resendConfirmation(
 ): Promise<AuthState> {
   const email = String(formData.get("email") ?? "").trim();
   const parsed = z.string().email().safeParse(email);
-  if (!parsed.success) return { error: "Email không hợp lệ.", email };
+  if (!parsed.success) return { error: "Invalid email.", email };
 
   const supabase = await createClient();
   const origin = await siteOrigin();
@@ -102,9 +102,9 @@ export async function resendConfirmation(
   });
   if (error) {
     const msg = /rate|too many|seconds/i.test(error.message)
-      ? "Gửi quá nhiều lần. Thử lại sau ít phút."
+      ? "Too many requests. Try again in a few minutes."
       : error.message;
     return { error: msg, email: parsed.data };
   }
-  return { message: "Đã gửi lại email xác nhận.", email: parsed.data };
+  return { message: "Confirmation email resent.", email: parsed.data };
 }

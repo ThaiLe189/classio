@@ -30,17 +30,17 @@ export default async function StudentsPage({
 
   return (
     <div className="mx-auto max-w-5xl">
-      <PageHeader title="Học sinh" description="Thông tin học sinh, phụ huynh và lớp." />
+      <PageHeader title="Students" description="Student, parent and class information." />
 
       <Card className="mb-6">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">Thêm học sinh</h2>
+        <h2 className="mb-3 text-sm font-semibold text-slate-700">Add student</h2>
         <form action={createStudent} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <Field label="Họ tên">
+          <Field label="Full name">
             <Input name="full_name" required />
           </Field>
-          <Field label="Lớp">
+          <Field label="Class">
             <Select name="class_id" defaultValue="">
-              <option value="">— Chưa xếp lớp —</option>
+              <option value="">— No class —</option>
               {(classes ?? []).map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -48,37 +48,37 @@ export default async function StudentsPage({
               ))}
             </Select>
           </Field>
-          <Field label="SĐT học sinh">
+          <Field label="Student phone">
             <Input name="phone" />
           </Field>
-          <Field label="Tên phụ huynh">
+          <Field label="Parent name">
             <Input name="parent_name" />
           </Field>
-          <Field label="SĐT phụ huynh">
+          <Field label="Parent phone">
             <Input name="parent_phone" />
           </Field>
-          <Field label="Ghi chú">
+          <Field label="Note">
             <Input name="note" />
           </Field>
           <div className="sm:col-span-2">
-            <SubmitButton>Thêm học sinh</SubmitButton>
+            <SubmitButton>Add student</SubmitButton>
           </div>
         </form>
       </Card>
 
       <div className="mb-3 flex flex-wrap items-center gap-2">
-        <span className="text-sm text-gray-500">Lọc theo lớp:</span>
+        <span className="text-sm text-slate-500">Filter by class:</span>
         <Link
           href="/students"
-          className={`rounded-full px-3 py-1 text-sm ${!classFilter ? "bg-indigo-100 text-indigo-700" : "bg-gray-100 text-gray-600"}`}
+          className={`rounded-full px-3 py-1 text-sm ${!classFilter ? "bg-brand-100 text-brand-700" : "bg-slate-100 text-slate-600"}`}
         >
-          Tất cả
+          All
         </Link>
         {(classes ?? []).map((c) => (
           <Link
             key={c.id}
             href={`/students?class=${c.id}`}
-            className={`rounded-full px-3 py-1 text-sm ${classFilter === c.id ? "bg-indigo-100 text-indigo-700" : "bg-gray-100 text-gray-600"}`}
+            className={`rounded-full px-3 py-1 text-sm ${classFilter === c.id ? "bg-brand-100 text-brand-700" : "bg-slate-100 text-slate-600"}`}
           >
             {c.name}
           </Link>
@@ -86,40 +86,40 @@ export default async function StudentsPage({
       </div>
 
       {!students || students.length === 0 ? (
-        <Empty>Chưa có học sinh nào.</Empty>
+        <Empty>No students yet.</Empty>
       ) : (
         <Card className="overflow-x-auto p-0">
           <table className="w-full text-sm">
-            <thead className="border-b border-gray-200 bg-gray-50 text-left text-gray-500">
+            <thead className="border-b border-slate-200 bg-slate-50 text-left text-slate-500">
               <tr>
-                <th className="px-4 py-3 font-medium">Họ tên</th>
-                <th className="px-4 py-3 font-medium">Lớp</th>
-                <th className="px-4 py-3 font-medium">Phụ huynh</th>
-                <th className="px-4 py-3 font-medium">SĐT PH</th>
+                <th className="px-4 py-3 font-medium">Name</th>
+                <th className="px-4 py-3 font-medium">Class</th>
+                <th className="px-4 py-3 font-medium">Parent</th>
+                <th className="px-4 py-3 font-medium">Parent phone</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-slate-100">
               {students.map((s) => (
-                <tr key={s.id}>
-                  <td className="px-4 py-3 font-medium text-gray-900">{s.full_name}</td>
-                  <td className="px-4 py-3 text-gray-600">
+                <tr key={s.id} className="transition hover:bg-slate-50/70">
+                  <td className="px-4 py-3 font-medium text-slate-900">{s.full_name}</td>
+                  <td className="px-4 py-3 text-slate-600">
                     {s.class_id ? classMap.get(s.class_id) ?? "—" : "—"}
                   </td>
-                  <td className="px-4 py-3 text-gray-600">{s.parent_name ?? "—"}</td>
-                  <td className="px-4 py-3 text-gray-600">{s.parent_phone ?? "—"}</td>
+                  <td className="px-4 py-3 text-slate-600">{s.parent_name ?? "—"}</td>
+                  <td className="px-4 py-3 text-slate-600">{s.parent_phone ?? "—"}</td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
                       <Link
                         href={`/students/${s.id}/edit`}
-                        className="rounded-md bg-gray-100 px-2.5 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-200"
+                        className="rounded-md bg-slate-100 px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-200"
                       >
-                        Sửa
+                        Edit
                       </Link>
                       <form action={deleteStudent}>
                         <input type="hidden" name="id" value={s.id} />
                         <SubmitButton variant="danger" className="px-2.5 py-1.5 text-xs">
-                          Xóa
+                          Delete
                         </SubmitButton>
                       </form>
                     </div>

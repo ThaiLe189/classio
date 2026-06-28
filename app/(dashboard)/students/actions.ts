@@ -7,7 +7,7 @@ import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 const schema = z.object({
-  full_name: z.string().min(1, "Tên học sinh bắt buộc"),
+  full_name: z.string().min(1, "Student name is required"),
   class_id: z.string().uuid().nullable(),
   phone: z.string().optional(),
   parent_name: z.string().optional(),

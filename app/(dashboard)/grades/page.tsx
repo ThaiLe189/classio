@@ -40,14 +40,14 @@ export default async function GradesPage({
 
   return (
     <div className="mx-auto max-w-3xl">
-      <PageHeader title="Điểm số" description="Chọn học sinh, nhập điểm theo bài/môn." />
+      <PageHeader title="Grades" description="Select a student, enter grades by subject/assignment." />
 
       <Card className="mb-6">
-        <form method="get" className="flex flex-wrap items-end gap-3">
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-gray-700">Học sinh</span>
+        <form method="get" className="flex flex-wrap items-end gap-4">
+          <label className="block space-y-2">
+            <span className="block text-sm font-medium text-gray-900">Student</span>
             <Select name="student" defaultValue={studentId} className="w-64">
-              <option value="">— Chọn học sinh —</option>
+              <option value="">— Select student —</option>
               {(students ?? []).map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.full_name}
@@ -57,70 +57,70 @@ export default async function GradesPage({
           </label>
           <button
             type="submit"
-            className="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white hover:bg-gray-900"
+            className="rounded-lg bg-brand-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-800 focus:ring-4 focus:ring-brand-300"
           >
-            Xem
+            View
           </button>
         </form>
       </Card>
 
       {!studentId ? (
-        <Empty>Chọn một học sinh để nhập và xem điểm.</Empty>
+        <Empty>Select a student to enter and view grades.</Empty>
       ) : (
         <>
           <Card className="mb-6">
-            <h2 className="mb-3 text-sm font-semibold text-gray-700">Thêm điểm</h2>
+            <h2 className="mb-3 text-sm font-semibold text-slate-700">Add grade</h2>
             <form action={addGrade} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <input type="hidden" name="student_id" value={studentId} />
-              <Field label="Môn">
-                <Input name="subject" required placeholder="VD: Toán" />
+              <Field label="Subject">
+                <Input name="subject" required placeholder="e.g. Math" />
               </Field>
-              <Field label="Bài / Cột điểm">
-                <Input name="assignment" placeholder="VD: Kiểm tra 15 phút" />
+              <Field label="Assignment">
+                <Input name="assignment" placeholder="e.g. 15-min quiz" />
               </Field>
-              <Field label="Điểm">
+              <Field label="Score">
                 <Input name="score" type="number" step="0.01" min="0" required />
               </Field>
-              <Field label="Điểm tối đa">
+              <Field label="Max score">
                 <Input name="max_score" type="number" step="0.01" min="1" defaultValue={10} />
               </Field>
-              <Field label="Ngày">
+              <Field label="Date">
                 <Input name="date" type="date" defaultValue={todayISO()} required />
               </Field>
               <div className="sm:col-span-2">
-                <SubmitButton>Thêm điểm</SubmitButton>
+                <SubmitButton>Add grade</SubmitButton>
               </div>
             </form>
           </Card>
 
           {grades.length === 0 ? (
-            <Empty>Học sinh này chưa có điểm.</Empty>
+            <Empty>This student has no grades yet.</Empty>
           ) : (
             <Card className="overflow-x-auto p-0">
               <table className="w-full text-sm">
-                <thead className="border-b border-gray-200 bg-gray-50 text-left text-gray-500">
+                <thead className="border-b border-slate-200 bg-slate-50 text-left text-slate-500">
                   <tr>
-                    <th className="px-4 py-3 font-medium">Môn</th>
-                    <th className="px-4 py-3 font-medium">Bài</th>
-                    <th className="px-4 py-3 font-medium">Điểm</th>
-                    <th className="px-4 py-3 font-medium">Ngày</th>
+                    <th className="px-4 py-3 font-medium">Subject</th>
+                    <th className="px-4 py-3 font-medium">Assignment</th>
+                    <th className="px-4 py-3 font-medium">Score</th>
+                    <th className="px-4 py-3 font-medium">Date</th>
                     <th className="px-4 py-3" />
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-slate-100">
                   {grades.map((g) => (
-                    <tr key={g.id}>
-                      <td className="px-4 py-3 font-medium text-gray-900">{g.subject}</td>
-                      <td className="px-4 py-3 text-gray-600">{g.assignment ?? "—"}</td>
-                      <td className="px-4 py-3 text-gray-900">
+                    <tr key={g.id} className="transition hover:bg-slate-50/70">
+                      <td className="px-4 py-3 font-medium text-slate-900">{g.subject}</td>
+                      <td className="px-4 py-3 text-slate-600">{g.assignment ?? "—"}</td>
+                      <td className="px-4 py-3 tabular-nums text-slate-900">
                         {g.score} / {g.max_score}
                       </td>
-                      <td className="px-4 py-3 text-gray-600">{formatDate(g.date)}</td>
+                      <td className="px-4 py-3 text-slate-600">{formatDate(g.date)}</td>
                       <td className="px-4 py-3 text-right">
                         <form action={deleteGrade}>
                           <input type="hidden" name="id" value={g.id} />
                           <SubmitButton variant="danger" className="px-2.5 py-1.5 text-xs">
-                            Xóa
+                            Delete
                           </SubmitButton>
                         </form>
                       </td>

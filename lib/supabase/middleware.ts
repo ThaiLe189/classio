@@ -10,7 +10,7 @@ export async function updateSession(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isPublic = PUBLIC_PATHS.some((p) => path.startsWith(p));
 
-  // Trang public: không cần xác thực -> bỏ qua hẳn lời gọi mạng tới Supabase.
+  // Public pages: no auth needed -> skip the network call to Supabase entirely.
   if (isPublic) {
     return NextResponse.next({ request });
   }

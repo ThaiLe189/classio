@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 
 const schema = z.object({
   student_id: z.string().uuid(),
-  period: z.string().regex(/^\d{4}-\d{2}$/, "Kỳ không hợp lệ"),
+  period: z.string().regex(/^\d{4}-\d{2}$/, "Invalid period"),
   amount: z.coerce.number().min(0),
   is_paid: z.boolean(),
 });

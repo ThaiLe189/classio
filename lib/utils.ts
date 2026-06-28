@@ -1,15 +1,15 @@
 export const WEEKDAYS = [
-  "Chủ nhật",
-  "Thứ 2",
-  "Thứ 3",
-  "Thứ 4",
-  "Thứ 5",
-  "Thứ 6",
-  "Thứ 7",
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
 ] as const;
 
 export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("vi-VN", {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "VND",
     maximumFractionDigits: 0,
@@ -17,17 +17,17 @@ export function formatCurrency(amount: number): string {
 }
 
 export function formatDate(iso: string): string {
-  return new Intl.DateTimeFormat("vi-VN").format(new Date(iso));
+  return new Intl.DateTimeFormat("en-US").format(new Date(iso));
 }
 
-/** Tháng hiện tại dạng 'YYYY-MM' theo giờ địa phương. */
+/** Current month as 'YYYY-MM' in local time. */
 export function currentPeriod(now = new Date()): string {
   const y = now.getFullYear();
   const m = String(now.getMonth() + 1).padStart(2, "0");
   return `${y}-${m}`;
 }
 
-/** Ngày hôm nay dạng 'YYYY-MM-DD' theo giờ địa phương. */
+/** Today as 'YYYY-MM-DD' in local time. */
 export function todayISO(now = new Date()): string {
   const y = now.getFullYear();
   const m = String(now.getMonth() + 1).padStart(2, "0");

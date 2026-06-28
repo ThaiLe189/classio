@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 
 const schema = z.object({
   student_id: z.string().uuid(),
-  subject: z.string().min(1, "Môn bắt buộc"),
+  subject: z.string().min(1, "Subject is required"),
   assignment: z.string().optional(),
   score: z.coerce.number().min(0),
   max_score: z.coerce.number().min(1),

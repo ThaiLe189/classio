@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-/** Lấy user đã đăng nhập; nếu chưa thì điều hướng về /login. */
+/** Get the signed-in user; redirect to /login if none. */
 export async function requireUser() {
   const supabase = await createClient();
   const {

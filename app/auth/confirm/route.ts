@@ -2,9 +2,9 @@ import { type EmailOtpType } from "@supabase/supabase-js";
 import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
-// Xử lý link xác nhận email. Hỗ trợ cả 2 luồng:
-//  - token_hash + type  (khuyến nghị, hoạt động cả khi mở link trên thiết bị khác)
-//  - code               (PKCE, khi dùng template ConfirmationURL mặc định)
+// Handles the email confirmation link. Supports both flows:
+//  - token_hash + type  (recommended, works even when the link is opened on another device)
+//  - code               (PKCE, when using the default ConfirmationURL template)
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const token_hash = searchParams.get("token_hash");

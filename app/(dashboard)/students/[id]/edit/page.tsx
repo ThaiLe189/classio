@@ -26,16 +26,16 @@ export default async function EditStudentPage({
 
   return (
     <div className="mx-auto max-w-xl">
-      <PageHeader title="Sửa học sinh" />
+      <PageHeader title="Edit student" />
       <Card>
         <form action={updateStudent} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <input type="hidden" name="id" value={s.id} />
-          <Field label="Họ tên">
+          <Field label="Full name">
             <Input name="full_name" defaultValue={s.full_name} required />
           </Field>
-          <Field label="Lớp">
+          <Field label="Class">
             <Select name="class_id" defaultValue={s.class_id ?? ""}>
-              <option value="">— Chưa xếp lớp —</option>
+              <option value="">— No class —</option>
               {(classes ?? []).map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -43,25 +43,25 @@ export default async function EditStudentPage({
               ))}
             </Select>
           </Field>
-          <Field label="SĐT học sinh">
+          <Field label="Student phone">
             <Input name="phone" defaultValue={s.phone ?? ""} />
           </Field>
-          <Field label="Tên phụ huynh">
+          <Field label="Parent name">
             <Input name="parent_name" defaultValue={s.parent_name ?? ""} />
           </Field>
-          <Field label="SĐT phụ huynh">
+          <Field label="Parent phone">
             <Input name="parent_phone" defaultValue={s.parent_phone ?? ""} />
           </Field>
-          <Field label="Ghi chú">
+          <Field label="Note">
             <Input name="note" defaultValue={s.note ?? ""} />
           </Field>
           <div className="flex gap-2 sm:col-span-2">
-            <SubmitButton>Lưu</SubmitButton>
+            <SubmitButton>Save</SubmitButton>
             <Link
               href="/students"
-              className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
+              className="rounded-md bg-slate-100 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-200"
             >
-              Hủy
+              Cancel
             </Link>
           </div>
         </form>

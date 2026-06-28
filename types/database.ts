@@ -1,5 +1,5 @@
-// Type khớp với supabase/migrations/20240101000000_init.sql.
-// Sau khi chạy migration, có thể regen bằng:
+// Types matching supabase/migrations/20240101000000_init.sql.
+// After running the migration, you can regenerate with:
 //   supabase gen types typescript --linked > types/database.ts
 
 export type AttendanceStatus = "present" | "absent" | "late";
@@ -104,7 +104,7 @@ export type Database = {
   };
 };
 
-// Tiện ích lấy kiểu hàng/insert/update
+// Helpers to derive row/insert/update types
 export type Tables<T extends keyof Database["public"]["Tables"]> =
   Database["public"]["Tables"][T]["Row"];
 export type TablesInsert<T extends keyof Database["public"]["Tables"]> =

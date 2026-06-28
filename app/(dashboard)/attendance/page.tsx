@@ -7,9 +7,9 @@ import { saveAttendance } from "./actions";
 import type { AttendanceStatus } from "@/types/database";
 
 const OPTIONS: { value: AttendanceStatus; label: string }[] = [
-  { value: "present", label: "Có mặt" },
-  { value: "absent", label: "Vắng" },
-  { value: "late", label: "Trễ" },
+  { value: "present", label: "Present" },
+  { value: "absent", label: "Absent" },
+  { value: "late", label: "Late" },
 ];
 
 export default async function AttendancePage({
@@ -49,14 +49,14 @@ export default async function AttendancePage({
 
   return (
     <div className="mx-auto max-w-3xl">
-      <PageHeader title="Điểm danh" description="Chọn lớp và ngày, đánh dấu trạng thái rồi lưu." />
+      <PageHeader title="Attendance" description="Pick a class and date, mark status, then save." />
 
       <Card className="mb-6">
-        <form method="get" className="flex flex-wrap items-end gap-3">
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-gray-700">Lớp</span>
+        <form method="get" className="flex flex-wrap items-end gap-4">
+          <label className="block space-y-2">
+            <span className="block text-sm font-medium text-gray-900">Class</span>
             <Select name="class" defaultValue={classId} className="w-48">
-              <option value="">— Chọn lớp —</option>
+              <option value="">— Select class —</option>
               {(classes ?? []).map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -64,34 +64,34 @@ export default async function AttendancePage({
               ))}
             </Select>
           </label>
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-gray-700">Ngày</span>
+          <label className="block space-y-2">
+            <span className="block text-sm font-medium text-gray-900">Date</span>
             <input
               type="date"
               name="date"
               defaultValue={date}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm"
+              className="block w-44 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-brand-500 focus:ring-brand-500"
             />
           </label>
           <button
             type="submit"
-            className="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white hover:bg-gray-900"
+            className="rounded-lg bg-brand-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-brand-800 focus:ring-4 focus:ring-brand-300"
           >
-            Tải danh sách
+            Load list
           </button>
         </form>
       </Card>
 
       {!classId ? (
-        <Empty>Chọn một lớp để bắt đầu điểm danh.</Empty>
+        <Empty>Select a class to start taking attendance.</Empty>
       ) : students.length === 0 ? (
-        <Empty>Lớp này chưa có học sinh.</Empty>
+        <Empty>This class has no students.</Empty>
       ) : (
         <form action={saveAttendance}>
           <input type="hidden" name="class_id" value={classId} />
           <input type="hidden" name="date" value={date} />
           <Card className="p-0">
-            <ul className="divide-y divide-gray-100">
+            <ul className="divide-y divide-slate-100">
               {students.map((s) => {
                 const sel = current.get(s.id) ?? "present";
                 return (
@@ -99,7 +99,7 @@ export default async function AttendancePage({
                     key={s.id}
                     className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
                   >
-                    <span className="font-medium text-gray-900">{s.full_name}</span>
+                    <span className="font-medium text-slate-900">{s.full_name}</span>
                     <div className="flex gap-3">
                       {OPTIONS.map((o) => (
                         <label key={o.value} className="flex items-center gap-1 text-sm">
@@ -119,7 +119,7 @@ export default async function AttendancePage({
             </ul>
           </Card>
           <div className="mt-4">
-            <SubmitButton>Lưu điểm danh</SubmitButton>
+            <SubmitButton>Save attendance</SubmitButton>
           </div>
         </form>
       )}
